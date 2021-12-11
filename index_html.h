@@ -21,7 +21,7 @@ div    { background-color:#888888; color:#ffffff; border:0px; padding:0px; margi
 </style>
 <script>
 
-function lazyBuginit() {
+function vulcanCaminit() {
   ajaxObj=[]; blur=10; setBlur();
   getFrame(); getFrameID=window.setInterval("getFrame();",500);
   doDisplay(); }
@@ -61,7 +61,7 @@ function replyAJAX(event) {
 
 function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMax-outMin)/(inMax-inMin)+outMin; }
 
-</script></head><body onload="lazyBuginit();">
+</script></head><body onload="vulcanCaminit();">
 
 <div><div class="x0a">vulcanCam</div></div>
 <div><div class="x0b">IR Camera</div></div>
