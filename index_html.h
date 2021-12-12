@@ -11,6 +11,7 @@ char *index_html=R"(
 <style>
 html   { font-family:Arial; }
 div    { background-color:#888888; color:#ffffff; border:0px; padding:0px; margin:0px; text-align:center; width:100%; user-select:none; display:inline-block; }
+canvas { display:none; }
 .x0a   { background-color:#C0A0A0; padding:0.2em 0em 0.1em; width:100%; font-size:1.5em; }
 .x0b   { background-color:#C0A0A0; padding:0.1em 0em 0.2em; width:100%; font-size:1.2em; }
 .x0    { background-color:#C0A0A0; padding:0.3em 0em; width:100%; font-size:1.4em; }
@@ -21,25 +22,17 @@ div    { background-color:#888888; color:#ffffff; border:0px; padding:0px; margi
 </style>
 <script>
 
-function vulcanCaminit() {
-  ajaxObj=[]; blur=10; setBlur(); openStream();
-  doDisplay(); }
-  
-function doDisplay() {
-  document.getElementById('blurBtn').innerHTML="Blur: "+blur+" Pixel"; }
+function vulcanCaminit() { ajaxObj=[]; openStream(); }
 
-function decBlur() { blur-=5; doRange(true); }
-function incBlur() { blur+=5; doRange(true); }
-function setBlur() { document.getElementById('camFrame').style="filter:blur("+blur+"px);"; }
+function doDisplay() { }
+
+function scaleSmooth() { document.getElementById('scaledFrame').style="image-rendering:auto;"; }
+function scalePixelated() { document.getElementById('scaledFrame').style="image-rendering:pixelated;"; }
 function openStream() { stream=new WebSocket("ws://"+window.location.hostname+":81"); stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; }
 function reopenStream() { if (stream.readyState==3) { openStream(); } }
 function closeStream() { stream.close(); }
 
-function doRange(doSet) {
-  if (blur<0) {blur=0; }
-  if (blur>30) {blur=30; }
-  if (doSet) { setBlur(); }
-  doDisplay(); }
+function doRange(doSet) { }
 
 function streamMessage(event) {
   temps=new Float32Array(event.data); minTemp=1000; maxTemp=0;
@@ -52,7 +45,8 @@ function streamMessage(event) {
     hue=mapValue(temp,minTemp,maxTemp,240,420);
     light=mapValue(temp,minTemp,maxTemp,30,60);
     camFrame.fillStyle='hsl('+hue+',70%,'+light+'%)';
-    camFrame.fillRect(x*20,y*20,20,20); } } }
+    camFrame.fillRect(x,y,1,1); } }
+  document.getElementById('scaledFrame').src=document.getElementById('camFrame').toDataURL("image/png"); }
 
 function requestAJAX(value) {
   ajaxObj[value]=new XMLHttpRequest; ajaxObj[value].url=value; ajaxObj[value].open("GET",value,true);
@@ -72,15 +66,16 @@ function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMa
 <div class="x1" onclick="location.replace('/chooseAP');">Choose WLAN AP</div></div>
 
 <div>
-<div><div class="x1"><canvas id="camFrame" width="640px" height="480px"></canvas></div></div>
-<div><div class="x3" id="blurBtn"></div>
-     <div class="x3" onclick="decBlur();">&#8722;</div>
-     <div class="x3" onclick="incBlur();">+</div></div>
+<div><div class="x1"><img id="scaledFrame" width="640px" height="480px"></img></div></div>
+<div><div class="x2" onclick="scaleSmooth();">Smooth</div>
+     <div class="x2" onclick="scalePixelated();">Pixelated</div></div>
 <div><div class="x2" onclick="closeStream();">Stop</div>
      <div class="x2" onclick="reopenStream();">Start</div></div>
 <div><div class="x2" id="minTemp"></div>
      <div class="x2" id="maxTemp"></div></div>
 </div>
+
+<canvas id="camFrame" width="32px" height="24px"></canvas>
 
 </body></html>
 
