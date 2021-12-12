@@ -3,11 +3,7 @@ String httpget(String request) {
 
   // vulcanCam specific pages
 
-  if (request.indexOf("/getFrame")>=0) { getFrame(); float maxTemp=0; float minTemp=1000;
-    for (int x=0;x<32*24;x++) { response+=String(frameBuffer[x]) + ",";
-      if (frameBuffer[x]<minTemp) { minTemp=frameBuffer[x]; }
-      else if (frameBuffer[x]>maxTemp) { maxTemp=frameBuffer[x]; } }
-    response+=String(minTemp) + "," + String(maxTemp) + ","; }
+  if (request.indexOf("/xxxx")>=0) { }
 
   // WLAN Choose specific pages
 

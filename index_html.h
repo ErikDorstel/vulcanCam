@@ -22,8 +22,7 @@ div    { background-color:#888888; color:#ffffff; border:0px; padding:0px; margi
 <script>
 
 function vulcanCaminit() {
-  ajaxObj=[]; blur=10; setBlur();
-  getFrame(); getFrameID=window.setInterval("getFrame();",500);
+  ajaxObj=[]; blur=10; setBlur(); openStream();
   doDisplay(); }
   
 function doDisplay() {
@@ -32,15 +31,28 @@ function doDisplay() {
 function decBlur() { blur-=5; doRange(true); }
 function incBlur() { blur+=5; doRange(true); }
 function setBlur() { document.getElementById('camFrame').style="filter:blur("+blur+"px);"; }
-function stopCam() { window.clearInterval(getFrameID); getFrameID=false; }
-function startCam() { if (getFrameID==false) { getFrameID=window.setInterval("getFrame();",500); } }
-function getFrame() { requestAJAX('getFrame'); }
+function openStream() { stream=new WebSocket("ws://"+window.location.hostname+":81"); stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; }
+function reopenStream() { if (stream.readyState==3) { openStream(); } }
+function closeStream() { stream.close(); }
 
 function doRange(doSet) {
   if (blur<0) {blur=0; }
   if (blur>30) {blur=30; }
-  if (doSet==true) { setBlur(); }
+  if (doSet) { setBlur(); }
   doDisplay(); }
+
+function streamMessage(event) {
+  temps=new Float32Array(event.data); minTemp=1000; maxTemp=0;
+  for (x=0;x<32*24;x++) { if (temps[x]<minTemp) { minTemp=temps[x]; } else if (temps[x]>maxTemp) { maxTemp=temps[x]; } }
+  document.getElementById('minTemp').innerHTML="Min: "+Math.round(minTemp*100)/100+" &#176;";
+  document.getElementById('maxTemp').innerHTML="Max: "+Math.round(maxTemp*100)/100+" &#176;";
+  camFrame=document.getElementById('camFrame').getContext('2d');
+  for (y=0;y<24;y++) { for (x=0;x<32;x++) {
+    temp=temps[y*32+(31-x)]*1;
+    hue=mapValue(temp,minTemp,maxTemp,240,420);
+    light=mapValue(temp,minTemp,maxTemp,30,60);
+    camFrame.fillStyle='hsl('+hue+',70%,'+light+'%)';
+    camFrame.fillRect(x*20,y*20,20,20); } } }
 
 function requestAJAX(value) {
   ajaxObj[value]=new XMLHttpRequest; ajaxObj[value].url=value; ajaxObj[value].open("GET",value,true);
@@ -48,16 +60,7 @@ function requestAJAX(value) {
 
 function replyAJAX(event) {
   if (event.target.status==200) {
-    if (event.target.url=="getFrame") {
-      minTemp=event.target.responseText.split(",")[32*24]*1; maxTemp=event.target.responseText.split(",")[32*24+1]*1;
-      document.getElementById('minTemp').innerHTML="Min: "+minTemp+" &#176;";
-      document.getElementById('maxTemp').innerHTML="Max: "+maxTemp+" &#176;";
-      camFrame=document.getElementById('camFrame').getContext('2d'); for (y=0;y<24;y++) { for (x=0;x<32;x++) {
-        temp=event.target.responseText.split(",")[y*32+(31-x)]*1;
-        hue=mapValue(temp,minTemp,maxTemp,240,420);
-        light=mapValue(temp,minTemp,maxTemp,30,60);
-        camFrame.fillStyle='hsl('+hue+',70%,'+light+'%)';
-        camFrame.fillRect(x*20,y*20,20,20); } } } } }
+    if (event.target.url=="xxxx") { } } }
 
 function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMax-outMin)/(inMax-inMin)+outMin; }
 
@@ -73,8 +76,8 @@ function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMa
 <div><div class="x3" id="blurBtn"></div>
      <div class="x3" onclick="decBlur();">&#8722;</div>
      <div class="x3" onclick="incBlur();">+</div></div>
-<div><div class="x2" onclick="stopCam();">Stop</div>
-     <div class="x2" onclick="startCam();">Start</div></div>
+<div><div class="x2" onclick="closeStream();">Stop</div>
+     <div class="x2" onclick="reopenStream();">Start</div></div>
 <div><div class="x2" id="minTemp"></div>
      <div class="x2" id="maxTemp"></div></div>
 </div>
