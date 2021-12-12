@@ -6,7 +6,8 @@ ESP32 based IR Camera with WebUI
 * works as WLAN client and AP (AP chooser included)
 * WebUI with IP address 192.168.4.1
 * 32x24 pixels
-* scale to 640x480 pixels with blur filter
+* scale to 640x480 pixels with smooth css image rendering
+* calculates min and max temperature
 #### I2C bus
 * SDA GPIO 21
 * SCL GPIO 22
