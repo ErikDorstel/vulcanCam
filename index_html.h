@@ -22,20 +22,27 @@ canvas { display:none; }
 </style>
 <script>
 
-function vulcanCaminit() { ajaxObj=[]; openStream(); }
+function vulcanCaminit() { ajaxObj=[]; shot=0; openStream(); }
 
 function doDisplay() { }
 
 function scaleSmooth() { document.getElementById('scaledFrame').style="image-rendering:auto;"; }
 function scalePixelated() { document.getElementById('scaledFrame').style="image-rendering:pixelated;"; }
+function doShot(count) { closeStream(); shot=count; shotCount=0; openStream(); }
 function openStream() { stream=new WebSocket("ws://"+window.location.hostname+":81"); stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; }
-function reopenStream() { if (stream.readyState==3) { openStream(); } }
+function reopenStream() { shot=0; if (stream.readyState==3) { openStream(); } }
 function closeStream() { stream.close(); }
 
 function doRange(doSet) { }
 
 function streamMessage(event) {
-  temps=new Float32Array(event.data); minTemp=1000; maxTemp=0;
+  if (shot==0) { temps=new Float32Array(event.data); doDisplayFrame(); } else {
+    if (shotCount==0) { temps=new Float32Array(event.data); shotCount++; } else {
+      tempsNew=new Float32Array(event.data); for (x=0;x<32*24;x++) { temps[x]+=tempsNew[x]; } shotCount++;
+      if (shotCount==shot) { for (x=0;x<32*24;x++) { temps[x]/=shot; } closeStream(); doDisplayFrame(); } } } }
+
+function doDisplayFrame() {
+  minTemp=1000; maxTemp=0;
   for (x=0;x<32*24;x++) { if (temps[x]<minTemp) { minTemp=temps[x]; } else if (temps[x]>maxTemp) { maxTemp=temps[x]; } }
   document.getElementById('minTemp').innerHTML="Min: "+Math.round(minTemp*100)/100+" &#176;";
   document.getElementById('maxTemp').innerHTML="Max: "+Math.round(maxTemp*100)/100+" &#176;";
@@ -69,8 +76,9 @@ function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMa
 <div><div class="x1"><img id="scaledFrame" width="640px" height="480px"></img></div></div>
 <div><div class="x2" onclick="scaleSmooth();">Smooth</div>
      <div class="x2" onclick="scalePixelated();">Pixelated</div></div>
-<div><div class="x2" onclick="closeStream();">Stop</div>
-     <div class="x2" onclick="reopenStream();">Start</div></div>
+<div><div class="x3" onclick="closeStream();">Stop</div>
+     <div class="x3" onclick="reopenStream();">Start</div>
+     <div class="x3" onclick="doShot(20);">Shot</div></div>
 <div><div class="x2" id="minTemp"></div>
      <div class="x2" id="maxTemp"></div></div>
 </div>
