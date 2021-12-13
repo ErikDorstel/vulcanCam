@@ -8,6 +8,7 @@ ESP32 based IR Camera with WebUI
 * 32x24 pixels
 * scale to 640x480 pixels with smooth css image rendering
 * calculates min and max temperature
+* shot mode (average 20 frames)
 #### I2C bus
 * SDA GPIO 21
 * SCL GPIO 22
