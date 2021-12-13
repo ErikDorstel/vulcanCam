@@ -14,4 +14,4 @@ ESP32 based IR Camera with WebUI
 * SCL GPIO 22
 * address 0x33
 #### PC (Firefox) Screenshot
-![IMAGE ALT TEXT HERE](https://www.dorstel.de/github/vulcanCam_v1.0.png)
+![IMAGE ALT TEXT HERE](https://www.dorstel.de/github/vulcanCam_v1.1.png)
