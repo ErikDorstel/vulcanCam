@@ -26,11 +26,11 @@ function vulcanCaminit() { ajaxObj=[]; doPrepareLegend(); shot=0; openStream(); 
 
 function doDisplay() { }
 
-function scaleSmooth() { document.getElementById('scaleFrame').style="image-rendering:auto;"; }
-function scalePixelated() { document.getElementById('scaleFrame').style="image-rendering:pixelated;"; }
+function doSmooth() { document.getElementById('scaledFrame').style="image-rendering:auto;"; }
+function doPixelated() { document.getElementById('scaledFrame').style="image-rendering:pixelated;"; }
 function doShot(count) { closeStream(); shot=count; shotCount=0; openStream(); }
 function openStream() { stream=new WebSocket("ws://"+window.location.hostname+":81"); stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; }
-function reopenStream() { shot=0; if (stream.readyState==3) { openStream(); } }
+function reopenStream() { closeStream(); shot=0; openStream(); }
 function closeStream() { stream.close(); }
 
 function doRange(doSet) { }
@@ -51,26 +51,26 @@ function doDisplayFrame() {
     light=mapValue(temp,minTemp,maxTemp,30,60);
     camFrame.fillStyle='hsl('+hue+',70%,'+light+'%)';
     camFrame.fillRect(x,y,1,1); } }
-  document.getElementById('scaleFrame').src=document.getElementById('camFrame').toDataURL("image/png"); }
+  document.getElementById('scaledFrame').src=document.getElementById('camFrame').toDataURL("image/png"); }
 
 function doPrepareLegend() {
-  scaleLegend=document.getElementById('scaleLegend').getContext('2d');
+  scaledLegend=document.getElementById('scaledLegend').getContext('2d');
   for (y=0;y<480;y++) {
     hue=mapValue(y,0,479,240,420);
     light=mapValue(y,0,479,30,60);
-    scaleLegend.fillStyle='hsl('+hue+',70%,'+light+'%)';
-    scaleLegend.fillRect(0,y,30,1); } }
+    scaledLegend.fillStyle='hsl('+hue+',70%,'+light+'%)';
+    scaledLegend.fillRect(0,y,30,1); } }
 
 function doDisplayLegend() {
-  scaleLegend=document.getElementById('scaleLegend').getContext('2d');
-  scaleLegend.clearRect(30,0,60,480);
+  scaledLegend=document.getElementById('scaledLegend').getContext('2d');
+  scaledLegend.clearRect(30,0,60,480);
   diff=Math.floor(maxTemp)-Math.ceil(minTemp); step=1; while (diff/step>10) { step++; }
   for (value=Math.ceil(minTemp);value<=Math.floor(maxTemp);value+=step) {
     y=mapValue(value,minTemp,maxTemp,0,479);
-    scaleLegend.fillStyle='rgb(0,0,0)';
-    scaleLegend.font="20px Arial";
-    scaleLegend.fillRect(30,y,10,1);
-    scaleLegend.fillText(value+"\u00b0",45,y+7); } }
+    scaledLegend.fillStyle='rgb(0,0,0)';
+    scaledLegend.font="20px Arial";
+    scaledLegend.fillRect(30,y,10,1);
+    scaledLegend.fillText(value+"\u00b0",45,y+7); } }
 
 function requestAJAX(value) {
   ajaxObj[value]=new XMLHttpRequest; ajaxObj[value].url=value; ajaxObj[value].open("GET",value,true);
@@ -90,9 +90,9 @@ function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMa
 <div class="x1" onclick="location.replace('/chooseAP');">Choose WLAN AP</div></div>
 
 <div>
-<div><div class="x1"><img id="scaleFrame" width="640px" height="480px"></img><canvas id="scaleLegend" width="90px" height="480px"></canvas></div></div>
-<div><div class="x2" onclick="scaleSmooth();">Smooth</div>
-     <div class="x2" onclick="scalePixelated();">Pixelated</div></div>
+<div><div class="x1"><img id="scaledFrame" width="640px" height="480px"></img><canvas id="scaledLegend" width="90px" height="480px"></canvas></div></div>
+<div><div class="x2" onclick="doSmooth();">Smooth</div>
+     <div class="x2" onclick="doPixelated();">Pixelated</div></div>
 <div><div class="x3" onclick="closeStream();">Stop</div>
      <div class="x3" onclick="reopenStream();">Start</div>
      <div class="x3" onclick="doShot(20);">Shot</div></div>
