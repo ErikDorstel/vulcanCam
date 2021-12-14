@@ -7,8 +7,9 @@ ESP32 based IR Camera with WebUI
 * WebUI with IP address 192.168.4.1
 * 32x24 pixels
 * upscaling to 640x480 pixels with smooth css image rendering
-* temperature display
+* temperature display (right side of frame)
 * shot mode (average 20 frames)
+* shows temperature after click in frame
 #### I2C bus
 * SDA GPIO 21
 * SCL GPIO 22
