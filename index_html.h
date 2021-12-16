@@ -28,19 +28,19 @@ function doDisplay() { }
 
 function openStream(count) { shot=count; shotCount=0;
   doPrepareLegend(); stream=new WebSocket("ws://"+window.location.hostname+":81");
-  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; idstyle("stopBtn","color:white;");
-  if (shot==0) { idstyle("runBtn","color:black;"); } else { idstyle("shotBtn","color:black;"); } }
+  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; id("stopBtn").style.color="white";
+  if (shot==0) { id("runBtn").style.color="black"; } else { id("shotBtn").style.color="black"; } }
 
 function reopenStream(count) { closeStream(); openStream(count); }
 
 function closeStream() { stream.close();
-  idstyle("stopBtn","color:black;"); idstyle("runBtn","color:white;"); idstyle("shotBtn","color:white;"); }
+  id("stopBtn").style.color="black"; id("runBtn").style.color="white"; id("shotBtn").style.color="white"; }
 
-function setSmooth() { idstyle("scaledFrame","image-rendering:auto;");
-  idstyle("smoothBtn","color:black;"); idstyle("pixelatedBtn","color:white;"); }
+function setSmooth() { id("scaledFrame").style="image-rendering:auto;";
+  id("smoothBtn").style.color="black"; id("pixelatedBtn").style.color="white"; }
 
-function setPixelated() { idstyle("scaledFrame","image-rendering:pixelated;");
-  idstyle("smoothBtn","color:white;"); idstyle("pixelatedBtn","color:black;"); }
+function setPixelated() { id("scaledFrame").style="image-rendering:pixelated;";
+  id("smoothBtn").style.color="white"; id("pixelatedBtn").style.color="black"; }
 
 function doRange(doSet) { }
 
@@ -102,7 +102,6 @@ function replyAJAX(event) {
 
 function mapValue(value,inMin,inMax,outMin,outMax) { return (value-inMin)*(outMax-outMin)/(inMax-inMin)+outMin; }
 function id(id) { return document.getElementById(id); }
-function idstyle(id,style) { document.getElementById(id).style=style; }
 
 </script></head><body onload="vulcanCaminit();">
 
