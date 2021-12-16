@@ -22,26 +22,25 @@ div     { background-color:#888888; color:#ffffff; border:0px; padding:0px; marg
 </style>
 <script>
 
-function vulcanCaminit() { ajaxObj=[]; doSmooth(); shot=0; openStream(); }
+function vulcanCaminit() { ajaxObj=[]; setSmooth(); openStream(0); }
 
 function doDisplay() { }
 
-function doSmooth() { idstyle("scaledFrame","image-rendering:auto;");
-  idstyle("smoothBtn","color:black;"); idstyle("pixelatedBtn","color:white;"); }
-
-function doPixelated() { idstyle("scaledFrame","image-rendering:pixelated;");
-  idstyle("smoothBtn","color:white;"); idstyle("pixelatedBtn","color:black;"); }
-
-function doShot(count) { closeStream(); shot=count; shotCount=0; openStream(); }
-
-function openStream() { doPrepareLegend(); stream=new WebSocket("ws://"+window.location.hostname+":81");
+function openStream(count) { shot=count; shotCount=0;
+  doPrepareLegend(); stream=new WebSocket("ws://"+window.location.hostname+":81");
   stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; idstyle("stopBtn","color:white;");
-  if (shot==0){ idstyle("runBtn","color:black;"); } else { idstyle("shotBtn","color:black;"); } }
+  if (shot==0) { idstyle("runBtn","color:black;"); } else { idstyle("shotBtn","color:black;"); } }
 
-function reopenStream() { closeStream(); shot=0; openStream(); }
+function reopenStream(count) { closeStream(); openStream(count); }
 
 function closeStream() { stream.close();
   idstyle("stopBtn","color:black;"); idstyle("runBtn","color:white;"); idstyle("shotBtn","color:white;"); }
+
+function setSmooth() { idstyle("scaledFrame","image-rendering:auto;");
+  idstyle("smoothBtn","color:black;"); idstyle("pixelatedBtn","color:white;"); }
+
+function setPixelated() { idstyle("scaledFrame","image-rendering:pixelated;");
+  idstyle("smoothBtn","color:white;"); idstyle("pixelatedBtn","color:black;"); }
 
 function doRange(doSet) { }
 
@@ -114,11 +113,11 @@ function idstyle(id,style) { document.getElementById(id).style=style; }
 
 <div>
 <div><div class="x1"><img id="scaledFrame" onclick="doDisplayTemp(event);" width="640px" height="480px"></img><canvas id="scaledLegend" width="90px" height="480px"></canvas></div></div>
-<div><div class="x2" id="smoothBtn" onclick="doSmooth();">Smooth</div>
-     <div class="x2" id="pixelatedBtn" onclick="doPixelated();">Pixelated</div></div>
+<div><div class="x2" id="smoothBtn" onclick="setSmooth();">Smooth</div>
+     <div class="x2" id="pixelatedBtn" onclick="setPixelated();">Pixelated</div></div>
 <div><div class="x3" id="stopBtn" onclick="closeStream();">Stop</div>
-     <div class="x3" id="runBtn" onclick="reopenStream();">Run</div>
-     <div class="x3" id="shotBtn" onclick="doShot(20);">Shot</div></div>
+     <div class="x3" id="runBtn" onclick="reopenStream(0);">Run</div>
+     <div class="x3" id="shotBtn" onclick="reopenStream(20);">Shot</div></div>
 </div>
 
 <canvas class="hidden" id="camFrame" width="32px" height="24px"></canvas>
