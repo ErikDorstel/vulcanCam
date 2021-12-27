@@ -2,7 +2,7 @@
 
 WebSocketsServer stream=WebSocketsServer(81);
 
-unsigned long timeMark=millis()+100;
+unsigned long websocketTimer=millis()+100;
 
 void streamEvent(uint8_t num,WStype_t type,uint8_t * payload,size_t length) {
   switch(type) {
@@ -17,5 +17,5 @@ void initWEBSOCKET() {
   stream.onEvent(streamEvent); }
 
 void websocketWorker() {
-  stream.loop(); if (millis()>=timeMark) { timeMark=millis()+200;
+  stream.loop(); if (millis()>=websocketTimer) { websocketTimer=millis()+200;
     if (stream.connectedClients()>0) { getFrame(); stream.broadcastBIN((byte*)frameBuffer,32*24*4); } } }
