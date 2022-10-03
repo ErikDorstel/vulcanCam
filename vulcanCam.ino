@@ -1,4 +1,7 @@
-boolean debug=false;
+boolean debug=true;
+
+const char* appName="vulcanCam";
+const char* appDesc="IR Camera";
 
 #include "MLX90640.h"
 #include "WLAN.h"
@@ -9,7 +12,9 @@ boolean debug=false;
 void setup() {
   if (debug) { Serial.begin(115200); }
   initWLAN();
+  initDNS();
+  initHTTP();
   initWEBSOCKET();
   initMLX90640(); }
 
-void loop() { httpWorker(); dnsWorker(); websocketWorker(); }
+void loop() { wlanWorker(); httpWorker(); dnsWorker(); websocketWorker(); }
