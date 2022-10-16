@@ -31,19 +31,19 @@ function doDisplay() { }
 
 function openStream(count) { shot=count; shotCount=0;
   doPrepareLegend(); stream=new WebSocket("ws://"+window.location.hostname+":81");
-  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; id("stopBtn").style.color="white";
-  if (shot==0) { id("runBtn").style.color="black"; } else { id("shotBtn").style.color="black"; } }
+  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; id("stopBtn").style.color="#f0f0f0";
+  if (shot==0) { id("runBtn").style.color="#000000"; id("shotBtn").style.color="#f0f0f0"; } else { id("shotBtn").style.color="#000000"; } }
 
 function reopenStream(count) { closeStream(); openStream(count); }
 
 function closeStream() { stream.close();
-  id("stopBtn").style.color="black"; id("runBtn").style.color="white"; id("shotBtn").style.color="white"; }
+  id("stopBtn").style.color="black"; id("runBtn").style.color="#f0f0f0"; id("shotBtn").style.color="#f0f0f0"; }
 
 function setSmooth() { id("scaledFrame").style="image-rendering:auto;";
-  id("smoothBtn").style.color="black"; id("pixelatedBtn").style.color="white"; }
+  id("smoothBtn").style.color="#000000"; id("pixelatedBtn").style.color="#f0f0f0"; }
 
 function setPixelated() { id("scaledFrame").style="image-rendering:pixelated;";
-  id("smoothBtn").style.color="white"; id("pixelatedBtn").style.color="black"; }
+  id("smoothBtn").style.color="#f0f0f0"; id("pixelatedBtn").style.color="#000000"; }
 
 function doRange(doSet) { }
 
@@ -114,7 +114,7 @@ function id(id) { return document.getElementById(id); }
 <div><div class="x0a" id="appName">&nbsp;</div></div>
 <div><div class="x0b" id="appDesc">&nbsp;</div></div>
 
-<div class="x1a" onclick="location.replace('/chooseAP');">Choose WLAN AP</div></div>
+<div><div class="x1a" onclick="location.replace('/chooseAP');">Choose WLAN AP</div></div>
 
 <div>
 <div><div class="x1"><img id="scaledFrame" onclick="doDisplayTemp(event);" width="640px" height="480px"></img><canvas id="scaledLegend" width="90px" height="480px"></canvas></div></div>
