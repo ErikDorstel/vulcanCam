@@ -25,19 +25,21 @@ div     { background-color:#e0e0e0; color:#000000; border:0px; padding:0px; marg
 
 function vulcanCaminit() {
   ajaxObj=[]; appName="&nbsp;"; appDesc="&nbsp;"; requestAJAX('appName');
-  setSmooth(); openStream(0); }
+  setSmooth(); openStream(0); window.setInterval("checkStream();",5000); }
 
 function doDisplay() { }
 
 function openStream(count) { shot=count; shotCount=0;
   doPrepareLegend(); stream=new WebSocket("ws://"+window.location.hostname+":81");
-  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; id("stopBtn").style.color="#f0f0f0";
+  stream.binaryType="arraybuffer"; stream.onmessage=streamMessage; stream.heartbeat=0; id("stopBtn").style.color="#f0f0f0";
   if (shot==0) { id("runBtn").style.color="#000000"; id("shotBtn").style.color="#f0f0f0"; } else { id("shotBtn").style.color="#000000"; } }
 
 function reopenStream(count) { closeStream(); openStream(count); }
 
-function closeStream() { stream.close();
+function closeStream() { stream.close(); shot=-1;
   id("stopBtn").style.color="black"; id("runBtn").style.color="#f0f0f0"; id("shotBtn").style.color="#f0f0f0"; }
+
+function checkStream() { if (shot>=0 && stream.heartbeat==0) { stream.close(); openStream(shot); } else { stream.heartbeat=0; } }
 
 function setSmooth() { id("scaledFrame").style="image-rendering:auto;";
   id("smoothBtn").style.color="#000000"; id("pixelatedBtn").style.color="#f0f0f0"; }
@@ -48,7 +50,7 @@ function setPixelated() { id("scaledFrame").style="image-rendering:pixelated;";
 function doRange(doSet) { }
 
 function streamMessage(event) {
-  if (shot==0) { temps=new Float32Array(event.data); doDisplayFrame(); doDisplayLegend(); } else {
+  if (shot==0) { stream.heartbeat++; temps=new Float32Array(event.data); doDisplayFrame(); doDisplayLegend(); } else {
     if (shotCount==0) { temps=new Float32Array(event.data); shotCount++; } else {
       tempsNew=new Float32Array(event.data); for (x=0;x<32*24;x++) { temps[x]+=tempsNew[x]; } shotCount++;
       if (shotCount==shot) { for (x=0;x<32*24;x++) { temps[x]/=shot; } closeStream(); doDisplayFrame(); doDisplayLegend(); } } } }
