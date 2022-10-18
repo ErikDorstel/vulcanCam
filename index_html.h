@@ -49,10 +49,10 @@ function setPixelated() { id("scaledFrame").style="image-rendering:pixelated;";
 
 function doRange(doSet) { }
 
-function streamMessage(event) {
-  if (shot==0) { stream.heartbeat++; temps=new Float32Array(event.data); doDisplayFrame(); doDisplayLegend(); } else {
-    if (shotCount==0) { temps=new Float32Array(event.data); shotCount++; } else {
-      tempsNew=new Float32Array(event.data); for (x=0;x<32*24;x++) { temps[x]+=tempsNew[x]; } shotCount++;
+function streamMessage(event) { stream.heartbeat++;
+  if (shot==0) { temps=new Float32Array(event.data); doDisplayFrame(); doDisplayLegend(); }
+  else { if (shotCount==0) { temps=new Float32Array(event.data); shotCount++; }
+    else { tempsNew=new Float32Array(event.data); for (x=0;x<32*24;x++) { temps[x]+=tempsNew[x]; } shotCount++;
       if (shotCount==shot) { for (x=0;x<32*24;x++) { temps[x]/=shot; } closeStream(); doDisplayFrame(); doDisplayLegend(); } } } }
 
 function doPrepareLegend() {
